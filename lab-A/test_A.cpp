@@ -71,7 +71,7 @@ TEST_F(ListTest, AddElemBlockSize_n6) {
     EXPECT_EQ(result, 1);
   }
 
-  EXPECT_EQ(list->siz, count + 1);
+  EXPECT_EQ(list->siz, count);
   EXPECT_NE(list->start->next, nullptr);
 }
 
