@@ -8,29 +8,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "labA.h"
+
 #define szE 12
 #define SZ (szE * 8 / 10)
 
-typedef struct element {
-  int bigdata[szE];
-  int siz;
-  struct element *next;
-} element;
-
-typedef struct {
-  element *start;
-  element *end;
-  int siz;
-} list;
-
-typedef struct {
-  list *list;
-  element *elem;
-  int i;
-} Iterator;
-
-element *createE() {
-  element *ELEM = (element *)malloc(sizeof(element));
+elementS *createE() {
+  elementS *ELEM = (elementS *)malloc(sizeof(elementS));
 
   if (!ELEM) {
     return 0;
@@ -42,7 +26,7 @@ element *createE() {
   return ELEM;
 }
 
-int L0(list *List) {
+int L0(listS *List) {
   if (!List) {
     return -1;
   }
@@ -53,15 +37,15 @@ int L0(list *List) {
   return 0;
 }
 
-list *createL() {
-  list *LIST = (list *)malloc(sizeof(list));
+listS *createL() {
+  listS *LIST = (listS *)malloc(sizeof(listS));
   if (LIST != 0) {
     L0(LIST);
   }
   return LIST;
 }
 
-int add(list *list, int num) {
+int add(listS *list, int num) {
   if (!list) {
     return 0;
   }
@@ -75,7 +59,7 @@ int add(list *list, int num) {
   }
 
   if (list->end->siz == szE) {
-    element *Elem = createE();
+    elementS *Elem = createE();
     if (!Elem) {
       return 0;
     }
@@ -92,23 +76,27 @@ int add(list *list, int num) {
 
     list->end->next = Elem;
     list->end = Elem;
+    if (list->end->siz < szE) {
+      list->end->bigdata[list->end->siz] = num;
+      list->end->siz++;
+      list->siz++;
+    }
 
-    list->end->bigdata[list->end->siz] = num;
-    list->end->siz++;
-    list->siz++;
+    return 1;
   }
 
   if (list->end->siz < szE) {
     list->end->bigdata[list->end->siz] = num;
     list->end->siz++;
     list->siz++;
+    return 1;
   }
 
-  return 1;
+  return 0;
 }
 
-void printL(list *list) {
-  element *beg = list->start;
+void printL(listS *list) {
+  elementS *beg = list->start;
   int numm = 0;
 
   do {
@@ -122,8 +110,8 @@ void printL(list *list) {
   } while (beg);
 }
 
-int findL(list *list, int key) {
-  element *beg = list->start;
+int findL(listS *list, int key) {
+  elementS *beg = list->start;
   int ind = 0;
 
   do {
@@ -140,11 +128,11 @@ int findL(list *list, int key) {
   return 0;
 }
 
-int findE(list *list, int ind, int *el) {
+int findE(listS *list, int ind, int *el) {
   if (!list || !list->start) {
     return 0;
   }
-  element *beg = list->start;
+  elementS *beg = list->start;
   int el0 = 0;
 
   do {
@@ -161,14 +149,14 @@ int findE(list *list, int ind, int *el) {
   return 0;
 }
 
-int deleteE(list *list, int idelem) {
+int deleteE(listS *list, int idelem) {
   if (!list || !list->start || idelem < 0) {
     return 0;
   }
 
-  element *beg = list->start;
+  elementS *beg = list->start;
   int count = 0;
-  element *rep = 0;
+  elementS *rep = 0;
 
   do {
     if (idelem >= count && idelem < (count + beg->siz)) {
@@ -187,7 +175,7 @@ int deleteE(list *list, int idelem) {
       list->siz = list->siz - 1;
 
       if ((beg->siz < szE) && (beg->next != 0)) {
-        element *newE = beg->next;
+        elementS *newE = beg->next;
         int newsz = SZ - beg->siz;
         int tt;
         if (newE->siz < newsz) {
@@ -209,10 +197,9 @@ int deleteE(list *list, int idelem) {
           newE->siz -= tt;
         } else {
           beg->next = newE->next;
-          if (list->end == newE) {
-            list->end = beg;
+          if (newE != beg) {
+            free(newE);
           }
-          free(newE);
         }
       }
       if ((beg->siz == 0) && (list->start != list->end)) {
@@ -237,10 +224,10 @@ int deleteE(list *list, int idelem) {
   return 0;
 }
 
-int countE(list *list) { return list->siz; }
+int countE(listS *list) { return list->siz; }
 
-Iterator createI(list *list) {
-  Iterator iter;
+IteratorS createI(listS *list) {
+  IteratorS iter;
   iter.list = list;
   if (list != NULL) {
     iter.elem = list->start;
@@ -251,12 +238,12 @@ Iterator createI(list *list) {
   return iter;
 }
 
-int iterated(Iterator *iter, int *ind) {
+int iterated(IteratorS *iter, int *ind) {
   if (iter->i >= iter->elem->siz) {
     iter->elem = iter->elem->next;
     iter->i = 0;
 
-    if (!iter->elem != 0) {
+    if (iter->elem == 0) {
       return 0;
     }
   }
@@ -264,15 +251,15 @@ int iterated(Iterator *iter, int *ind) {
   return 1;
 }
 
-void freel(list *list) {
+void freel(listS *list) {
   if (!list) {
     return;
   }
 
-  element *beg = list->start;
+  elementS *beg = list->start;
 
   do {
-    element *next = beg->next;
+    elementS *next = beg->next;
     free(beg);
     beg = next;
   } while (beg);
@@ -280,16 +267,18 @@ void freel(list *list) {
   free(list);
 }
 
-int main(void) {
-  setlocale(LC_CTYPE, "Russian");
-  list *Unlist = createL();
-
-  for (int i = 1; i <= 100; i++) {
-    add(Unlist, i);
-  }
-
-  deleteE(Unlist, 65);
-  printL(Unlist);
-
-  return 0;
-}
+// int main(void) {
+//   setlocale(LC_CTYPE, "Russian");
+//   listS *Unlist = createL();
+//
+//   for (int i = 1; i <= 100; i++) {
+//     add(Unlist, i);
+//   }
+//
+//   deleteE(Unlist, 65);
+//   printL(Unlist);
+//
+//   freel(Unlist);
+//
+//   return 0;
+// }
