@@ -79,3 +79,19 @@ void FreeMatrix(int** A, int N) {
   }
   free(A);
 }
+
+ /*int main() {
+  setlocale(LC_CTYPE, "Russian");
+  FILE* file = fopen("labC.txt", "r");
+  FILE* fileb = fopen("labCw.txt", "w+");
+
+  int** A = 0;
+
+  int N = ReadM(file, &A);
+
+  PrintM(A, N);
+  PrintAdjL(A, N);
+  WriteAdjL(fileb, A, N);
+  FreeMatrix(A, N);
+  return 0;
+}*/
