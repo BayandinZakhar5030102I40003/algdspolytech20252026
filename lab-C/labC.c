@@ -3,12 +3,12 @@
 #define _CRT_SECURE_NO_WARNINGS
 #define _CRTDBG_MAP_ALLOC
 
-#include "labC.h"
-
 #include <locale.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "labC.h"
 
 int ReadM(FILE* file, int*** A) {
   if (file == NULL) {
@@ -37,7 +37,7 @@ int ReadM(FILE* file, int*** A) {
 }
 
 void PrintM(int** A, int N) {
-  printf("Матрица смежности:\n");
+  printf("Матрица смежности :\n");
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < N; j++) {
       printf("%d ", A[i][j]);
@@ -49,7 +49,7 @@ void PrintM(int** A, int N) {
 }
 
 void PrintAdjL(int** A, int N) {
-  printf("Список смежности:\n");
+  printf("Список смежности :\n");
   for (int i = 0; i < N; i++) {
     printf("%i|", i + 1);
     for (int j = 0; j < N; j++) {
@@ -63,7 +63,7 @@ void PrintAdjL(int** A, int N) {
 }
 
 void WriteAdjL(FILE* file, int** A, int N) {
-  fprintf(file, "Список смежности:\n");
+  fprintf(file, "Список смежности :\n");
   for (int i = 0; i < N; i++) {
     fprintf(file, "%i|", i + 1);
     for (int j = 0; j < N; j++) {
